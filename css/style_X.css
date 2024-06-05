@@ -1,0 +1,235 @@
+/* Definizione dei colori principali */
+:root {
+    --primary-color: #ffffff; /* Colore del testo principale */
+    --background-color: #000000; /* Colore di sfondo nero */
+    --border-color: #444444; /* Colore del bordo per separatori */
+    --button-background: #ffffff; /* Colore di sfondo dei pulsanti */
+    --button-text-color: #000000; /* Colore del testo dei pulsanti */
+    --button-hover-background: #ff0000; /* Colore di sfondo dei pulsanti al passaggio del mouse (rosso) */
+    --muted-text-color: #888888; /* Colore del testo attenuato */
+}
+
+/* Stile generale della pagina */
+body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: var(--background-color);
+    color: var(--primary-color);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Header */
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 1200px;
+    margin-top: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+header img {
+    width: 400px;
+    height: auto;
+    transition: all 0.3s ease-in-out;
+}
+
+header div {
+    text-align: right;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5em;
+    color: var(--primary-color);
+}
+
+header blockquote {
+    font-style: italic;
+    color: var(--primary-color);
+    margin: 10px 0;
+}
+
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    header img {
+        width: 100px;
+        margin-bottom: 20px;
+    }
+
+    header div {
+        text-align: center;
+    }
+}
+
+/* Container principale */
+main {
+    width: 90%;
+    max-width: 1200px;
+    text-align: right;
+    padding: 20px 0;
+}
+
+.signup-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.signup-container p {
+    font-size: 1.2em;
+    margin: 10px 0;
+}
+
+.signup-container .btn {
+    background-color: var(--button-background);
+    color: var(--button-text-color);
+    border: none;
+    padding: 10px 20px;
+    margin: 10px 0;
+    cursor: pointer;
+    border-radius: 20px;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.signup-container .btn:hover {
+    background-color: var(--button-hover-background);
+}
+
+.separator {
+    height: 1px;
+    background-color: var(--border-color);
+    margin: 20px 0;
+}
+
+/* Lista delle funzionalità */
+ul.dropdown-menu {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+    margin: 20px auto;
+    max-width: 600px;
+}
+
+ul.dropdown-menu li {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--muted-text-color);
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+    background-color: var(--background-color);
+    border-top: 1px solid var(--border-color);
+    color: var(--muted-text-color);
+}
+
+footer a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: text-decoration 0.3s;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+footer p {
+    margin: 10px 0 0 0;
+}
+
+/* Titolo sezione */
+h3 {
+    text-align: center;
+}
+
+/* Allineamento al centro per dispositivi mobili */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    header img {
+        width: 150px;
+        margin-bottom: 20px;
+    }
+
+    header div {
+        text-align: center;
+    }
+
+    main {
+        text-align: center;
+    }
+
+    .signup-container {
+        align-items: center;
+        text-align: center;
+    }
+
+    ul.dropdown-menu {
+        text-align: center;
+    }
+}
+
+/* Stili di stampa */
+@media print {
+    body {
+        background-color: #ffffff;
+        color: #000000;
+    }
+
+    header, main, footer {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    header img {
+        width: 100px;
+    }
+
+    header div {
+        text-align: left;
+    }
+
+    .btn {
+        display: none;
+    }
+
+    ul.dropdown-menu li {
+        border: none;
+    }
+
+    footer {
+        border-top: none;
+        color: #000000;
+    }
+
+    a {
+        text-decoration: underline;
+        color: #000000;
+    }
+
+    .separator {
+        display: none;
+    }
+}
