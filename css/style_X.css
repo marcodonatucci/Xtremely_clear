@@ -80,7 +80,7 @@ main {
     padding: 20px 0;
 }
 
-.signup-container {
+.signup-container, .form-container {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -89,12 +89,12 @@ main {
     padding: 20px;
 }
 
-.signup-container p {
+.signup-container p, .form-container label, .form-container p {
     font-size: 1.2em;
     margin: 10px 0;
 }
 
-.signup-container .btn {
+.signup-container .btn, .form-container .btn {
     background-color: var(--button-background);
     color: var(--button-text-color);
     border: none;
@@ -106,7 +106,7 @@ main {
     transition: background-color 0.3s ease;
 }
 
-.signup-container .btn:hover {
+.signup-container .btn:hover, .form-container .btn:hover {
     background-color: var(--button-hover-background);
 }
 
@@ -169,7 +169,7 @@ h3 {
     }
 
     header img {
-        width: 150px;
+        width: 100px;
         margin-bottom: 20px;
     }
 
@@ -181,7 +181,7 @@ h3 {
         text-align: center;
     }
 
-    .signup-container {
+    .signup-container, .form-container {
         align-items: center;
         text-align: center;
     }
@@ -233,3 +233,25 @@ h3 {
         display: none;
     }
 }
+
+/* Stile del form di registrazione */
+.form-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-container label {
+    text-align: left;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.form-container input {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: var(--background-color);
+    color: var(--primary-color);
+}
+

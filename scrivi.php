@@ -4,27 +4,17 @@
     <meta charset="UTF-8">
     <meta name="author" content="Marco Donatucci">
     <meta name="keywords" lang="it" content="html">
-    <meta name="description" content="Simulazione sito web X">
+    <meta name="description" content="Pagina per scrivere un tweet per Xtremely Clear">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="images/icon.png">
     <link rel="stylesheet" type="text/css" href="css/style_X.css">
-    <title>Xtremely Clear - Home</title>
+    <title>Xtremely Clear - Scrivi</title>
 </head>
 <body>
     <header>
         <img src="images/image1.png" alt="Immagine iniziale">
         <div>
             <h1>Xtremely Clear</h1>
-            <blockquote>You can't ban me anymore - Donald Trump</blockquote>
-            <blockquote>L'unico social ammesso nei seminari - Papa Francesco</blockquote>
-            <blockquote>Lo mas guapo que hay - Antonio Banderas</blockquote>
-            <div class="signup-container">
-                <p>Non hai ancora un account?</p>
-                <button class="btn" onclick="window.location.href='registrazione.php'">Registrati ora!</button>
-                <div class="separator"></div>
-                <p>Hai già un account? Accedi adesso!</p>
-                <button class="btn" onclick="window.location.href='login.php'">Accedi</button>    
-            </div>
         </div>
     </header>
     <div>   
@@ -92,16 +82,18 @@
     ?>
 </style></div>
     <main>
-        <h3>Cosa troverai qui</h3>
-        <ul class="dropdown-menu">
-            <li>Gestione dell'account semplificata, anche tua nonna riuscirà ad usarlo!</li>
-            <li>Condividi i tuoi pensieri in tutto il mondo!</li>
-            <li>Entra in contatto con nuove persone che hanno i tuoi stessi interessi!</li>
-        </ul>
+        <div class="form-container">
+            <h3>Scrivi un Tweet</h3>
+            <form action="invia.php" method="post">
+                <label for="tweet">Tweet (max 140 caratteri):</label>
+                <textarea id="tweet" name="tweet" rows="4" maxlength="140" required></textarea>
+                <button type="submit" class="btn">Invia</button>
+            </form>
+        </div>
     </main>
     <footer>
         <p>Copyright &copy; 2024 <a href="mailto:s293556@studenti.polito.it">Elon Musk</a>. Tutti i diritti riservati.</p>
-        <p>Pagina corrente: Xtremely_clear/Home</p>
+        <p>Pagina corrente: Xtremely_clear/Scrivi</p>
     </footer>
 </body>
 </html>
