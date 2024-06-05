@@ -59,7 +59,7 @@
     }
 
     nav ul li a:hover {
-        color: #ff0000; /* Rosso */
+        color: #1DA1F2; /* Rosso */
     }
 
     /* Stili per il menu di navigazione quando l'utente è autenticato */

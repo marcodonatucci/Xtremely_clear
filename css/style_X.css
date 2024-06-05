@@ -5,7 +5,7 @@
     --border-color: #444444; /* Colore del bordo per separatori */
     --button-background: #ffffff; /* Colore di sfondo dei pulsanti */
     --button-text-color: #000000; /* Colore del testo dei pulsanti */
-    --button-hover-background: #ff0000; /* Colore di sfondo dei pulsanti al passaggio del mouse (rosso) */
+    --button-hover-background: #1da1f2; /* Colore di sfondo dei pulsanti al passaggio del mouse (rosso) */
     --muted-text-color: #888888; /* Colore del testo attenuato */
 }
 
