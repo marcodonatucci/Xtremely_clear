@@ -1,19 +1,8 @@
-/* Definizione dei colori principali */
-:root {
-    --primary-color: #ffffff; /* Colore del testo principale */
-    --background-color: #000000; /* Colore di sfondo nero */
-    --border-color: #444444; /* Colore del bordo per separatori */
-    --button-background: #ffffff; /* Colore di sfondo dei pulsanti */
-    --button-text-color: #000000; /* Colore del testo dei pulsanti */
-    --button-hover-background: #1da1f2; /* Colore di sfondo dei pulsanti al passaggio del mouse (rosso) */
-    --muted-text-color: #888888; /* Colore del testo attenuato */
-}
-
 /* Stile generale della pagina */
 body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: var(--background-color);
-    color: var(--primary-color);
+    background-color:  #000000; /* Colore di sfondo nero */
+    color: #ffffff; /* Colore del testo bianco (alto contrasto)*/
     margin: 0;
     padding: 0;
     display: flex;
@@ -28,16 +17,16 @@ header {
     justify-content: space-between;
     align-items: center;
     width: 90%;
-    max-width: 1200px;
-    margin-top: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--border-color);
+    max-width: 75rem;
+    margin-top: 1.25rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid  #444444; /* Colore del bordo per il separatore */
 }
 
 header img {
-    width: 400px;
+    width: 25rem;
     height: auto;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out; /* Transizione per un effetto di cambiamento */
 }
 
 header div {
@@ -47,24 +36,24 @@ header div {
 header h1 {
     margin: 0;
     font-size: 2.5em;
-    color: var(--primary-color);
+    color: #ffffff;  /* Colore del testo bianco */
 }
 
 header blockquote {
     font-style: italic;
-    color: var(--primary-color);
-    margin: 10px 0;
+    color: #ffffff; /* Colore del testo bianco e font italico per le citazioni*/
+    margin: 0.625rem 0;
 }
-
-@media (max-width: 768px) {
+/*stile responsivo per l'intestazione quando la larghezza dello schermo è inferiore a 768px (48em), adattando la disposizione degli elementi*/
+@media (max-width: 48em) {
     header {
         flex-direction: column;
         align-items: center;
     }
 
     header img {
-        width: 100px;
-        margin-bottom: 20px;
+        width: 6.25rem;
+        margin-bottom: 1.25rem;
     }
 
     header div {
@@ -72,48 +61,48 @@ header blockquote {
     }
 }
 
-/* Container principale */
+/* Container principale con tutte le classi relative a container specifici delle diverse pagine*/
 main {
     width: 90%;
-    max-width: 1200px;
+    max-width: 75rem;
     text-align: right;
-    padding: 20px 0;
+    padding: 1.25rem 0;
 }
 
 .signup-container, .form-container {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    max-width: 400px;
+    max-width: 25rem;
     margin: 0 auto;
-    padding: 20px;
+    padding: 1.25rem;
 }
 
 .signup-container p, .form-container label, .form-container p {
     font-size: 1.2em;
-    margin: 10px 0;
+    margin: 0.625rem 0;
 }
 
 .signup-container .btn, .form-container .btn {
-    background-color: var(--button-background);
-    color: var(--button-text-color);
+    background-color: #ffffff; /* Colore di sfondo dei pulsanti */
+    color: #000000; /* Colore del testo dei pulsanti */
     border: none;
-    padding: 10px 20px;
-    margin: 10px 0;
+    padding: 0.625rem 1.25rem;
+    margin: 0.625rem 0;
     cursor: pointer;
-    border-radius: 20px;
+    border-radius: 1.25rem;
     font-size: 1em;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease; /* Transizione per l'effetto hover */
 }
 
 .signup-container .btn:hover, .form-container .btn:hover {
-    background-color: var(--button-hover-background);
+    background-color: #1da1f2; /* Colore di sfondo al passaggio del mouse */
 }
 
 .separator {
     height: 1px;
-    background-color: var(--border-color);
-    margin: 20px 0;
+    background-color:  #444444;
+    margin: 1.25rem 0;
 }
 
 /* Lista delle funzionalità */
@@ -121,38 +110,39 @@ ul.dropdown-menu {
     list-style: none;
     padding: 0;
     text-align: left;
-    margin: 20px auto;
-    max-width: 600px;
+    margin: 1.25rem auto;
+    max-width: 37.5rem;
 }
 
 ul.dropdown-menu li {
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border-color);
-    color: var(--muted-text-color);
+    padding: 0.625rem 0;
+    border-bottom: 1px solid  #444444; /* Colore del bordo per gli elementi della lista */
+    color: #888888; /* Colore del testo attenuato */
 }
 
 /* Footer */
 footer {
+    font-style: italic;
     text-align: center;
-    padding: 20px;
+    padding: 1.25rem;
     width: 100%;
-    background-color: var(--background-color);
-    border-top: 1px solid var(--border-color);
-    color: var(--muted-text-color);
+    background-color: #000000; /* Colore di sfondo nero */
+    border-top: 1px solid  #444444; /* Bordo superiore del footer */
+    color: #888888; /* Colore del testo attenuato */
 }
 
 footer a {
-    color: var(--primary-color);
+    color: #ffffff; /* Colore del link bianco */
     text-decoration: none;
     transition: text-decoration 0.3s;
 }
 
 footer a:hover {
-    text-decoration: underline;
+    text-decoration: underline; /* Sottolinea il link al passaggio del mouse */
 }
 
 footer p {
-    margin: 10px 0 0 0;
+    margin: 0.625rem 0 0 0;
 }
 
 /* Titolo sezione */
@@ -161,7 +151,7 @@ h3 {
 }
 
 /* Allineamento al centro per dispositivi mobili */
-@media (max-width: 768px) {
+@media (max-width: 48em) {
     header {
         flex-direction: column;
         align-items: center;
@@ -169,8 +159,8 @@ h3 {
     }
 
     header img {
-        width: 100px;
-        margin-bottom: 20px;
+        width: 6.25rem;
+        margin-bottom: 1.25rem;
     }
 
     header div {
@@ -194,8 +184,8 @@ h3 {
 /* Stili di stampa */
 @media print {
     body {
-        background-color: #ffffff;
-        color: #000000;
+        background-color: #ffffff; /* Colore di sfondo bianco */
+        color: #000000; /* Colore del testo nero */
     }
 
     header, main, footer {
@@ -204,7 +194,7 @@ h3 {
     }
 
     header img {
-        width: 100px;
+        width: 6.25rem;
     }
 
     header div {
@@ -212,7 +202,7 @@ h3 {
     }
 
     .btn {
-        display: none;
+        display: none; /* Nasconde i pulsanti durante la stampa */
     }
 
     ul.dropdown-menu li {
@@ -226,11 +216,11 @@ h3 {
 
     a {
         text-decoration: underline;
-        color: #000000;
+        color: #000000; /* Colore del link nero, sottolineato */
     }
 
     .separator {
-        display: none;
+        display: none; /* Nasconde i separatori durante la stampa */
     }
 }
 
@@ -243,15 +233,124 @@ h3 {
 .form-container label {
     text-align: left;
     width: 100%;
-    margin-bottom: 5px;
+    margin-bottom: 0.3125rem;
 }
 
 .form-container input {
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    background-color: var(--background-color);
-    color: var(--primary-color);
+    padding: 0.625rem;
+    margin-bottom: 0.9375rem;
+    border: 1px solid  #444444;
+    border-radius: 0.3125rem;
+    background-color: #000000;
+    color: #ffffff;
 }
 
+/* Stili per i tweet */
+.tweet-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1.25rem;
+}
+
+.tweet {
+    border: 0.125rem solid #ffffff;
+    border-radius: 0.625rem;
+    background-color: #000000;
+    color: #ffffff;
+    padding: 0.9375rem;
+    margin: 0.625rem 0; 
+    width: 80%;
+    max-width: 31.25rem;
+    box-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.5); /* Effetto ombra */
+}
+
+.tweet .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ffffff;
+    padding-bottom: 0.3125rem;
+    margin-bottom: 0.625rem;
+}
+/* Nome autore di colore bianco in grassetto */
+.tweet .author {
+    font-weight: bold;
+    color: #ffffff; 
+}
+
+.tweet .date {
+    font-size: 0.9em;
+    color: #ffffff;
+}
+
+.tweet .content {
+    padding: 0.625rem 0;
+    font-size: 1em;
+    color: #ffffff;
+}
+
+.error-message, .success-message {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+.success-message {
+    color: green;
+}
+
+.no-tweets {
+    color: #ffffff;
+    text-align: center;
+    margin-top: 1.25rem;
+}
+/*Imposta lo stile per il blocco delle informazioni utente, posizionandolo in alto a sinistra e definendo colori e font*/
+.user-info {
+    position: absolute;
+    display: inline-block;
+    top: 0.625rem;
+    left: 0.625rem;
+    color: #fff;
+    padding: 0.3125rem 0.625rem;
+    border-radius: 0.3125rem;
+    font-size: 0.875rem;
+}
+.user-info .username {
+    font-weight: bold;
+}
+.user-info .last-tweet {
+    font-size: 0.75rem;
+    font-style: italic;
+}
+/* Stili per il menu di navigazione */
+nav {
+    text-align: center;
+    margin-top: 1.25rem;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 1.25rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #ffffff;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: #1DA1F2; /* Colore del link al passaggio del mouse */
+}
+
+/* Stili per i link disabilitati */
+nav ul li a.disabled {
+    pointer-events: none;
+    color: #888888; /* Grigio per i link disabilitati */
+}

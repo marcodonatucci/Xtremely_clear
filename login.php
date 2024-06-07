@@ -1,4 +1,49 @@
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Se l'utente è già loggato, reindirizza alla pagina home.php
+if(isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
+    header("Location: home.php");
+    exit();
+}
+
+include 'php/config_normale.php';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $username = mysqli_real_escape_string($conn, $_POST['user']);
+    $password = mysqli_real_escape_string($conn, $_POST['pwd']);
+
+    $sql = "SELECT * FROM utenti WHERE username = '$username'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+        if ($password === $row['pwd']) {
+            $_SESSION['logged_in'] = true;
+            $_SESSION['username'] = $username;
+
+            // Memorizza l'username in un cookie per 16 ore
+            setcookie('last_username', $username, time() + 16 * 3600, '/');
+
+            echo "<script>alert('Accesso effettuato con successo!'); window.location='bacheca.php';</script>";
+            exit();
+        } else {
+            echo "<script>alert('Password errata! Si prega di riprovare.');</script>";
+        }
+    } else {
+        echo "<script>alert('Username non trovato! Si prega di registrarsi.');</script>";
+    }
+}
+?>
+
 <!DOCTYPE html>
+<!--Impostazione dei metadati della pagina: lingua, codifica utf8, autore, breve descrizione,
+viewport, icona da visualizzare, inclusione file css per gli stili, titolo della pagina-->
 <html lang="it">
 <head>
     <meta charset="UTF-8">
@@ -8,9 +53,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="images/icon.png">
     <link rel="stylesheet" type="text/css" href="css/style_X.css">
+    <script src="js/login.js"></script>
     <title>Xtremely Clear - Login</title>
 </head>
 <body>
+    <?php include 'php/preheader.php'; ?>
+     <!--Costruzione header con logo e nome del sito-->
     <header>
         <img src="images/image1.png" alt="Immagine iniziale">
         <div>
@@ -18,75 +66,27 @@
         </div>
     </header>
     <div>   
-            <nav>
-                <ul>
-                    <li><a href="home.php">HOME</a></li>
-                    <li><a href="registrazione.php">REGISTRA</a></li>
-                    <li><a href="bacheca.php">BACHECA</a></li>
-                    <li><a href="scrivi.php">SCRIVI</a></li>
-                    <li><a href="login.php">LOGIN</a></li>
-                    <li><a href="scopri.php">SCOPRI</a></li>
-                    <?php
-                    session_start();
-                    if(isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
-                        echo '<li><a href="logout.php">LOGOUT</a></li>';
-                    }
-                    ?>
-                </ul>
-            </nav>
-
-<style>
-    /* Stili per il menu di navigazione */
-    nav {
-        text-align: center;
-        margin-top: 20px;
-    }
-
-    nav ul {
-        list-style: none;
-        padding: 0;
-    }
-
-    nav ul li {
-        display: inline;
-        margin-right: 20px;
-    }
-
-    nav ul li a {
-        text-decoration: none;
-        color: #ffffff;
-        transition: color 0.3s ease;
-    }
-
-    nav ul li a:hover {
-        color: #1DA1F2; /* Rosso */
-    }
-
-    /* Stili per il menu di navigazione quando l'utente è autenticato */
-    <?php
-    if(isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
-        echo 'nav ul li a[href="login.php"] {';
-        echo 'display: none;';
-        echo '}';
-        echo 'nav ul li a[href="logout.php"] {';
-        echo 'display: inline;';
-        echo '}';
-    } else {
-        echo 'nav ul li a[href="login.php"] {';
-        echo 'display: inline;';
-        echo '}';
-        echo 'nav ul li a[href="logout.php"] {';
-        echo 'display: none;';
-        echo '}';
-    }
-    ?>
-</style></div>
+        <!--Menu di navigazione composto da una lista di voci ognuna con un riferimento ad una pagina per il reindirizzamento-->
+    <nav>
+        <ul>
+            <li><a href="home.php">HOME</a></li>
+            <li><a href="registrazione.php">REGISTRA</a></li>
+            <li><a href="bacheca.php" class="<?php echo (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) ? '' : 'disabled'; ?>">BACHECA</a></li>
+            <li><a href="scrivi.php" class="<?php echo (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) ? '' : 'disabled'; ?>">SCRIVI</a></li>
+            <li><a href="login.php" class="<?php echo (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) ? 'disabled' : ''; ?>">LOGIN</a></li>
+            <li><a href="scopri.php">SCOPRI</a></li>
+            <li><a href="php/logout.php" class="<?php echo (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) ? '' : 'disabled'; ?>">LOGOUT</a></li>
+        </ul>
+    </nav>
+    </div>
     <main>
+        <!--Form per la procedura di autenticazione, due textfield relativi a username e password, bottone invia per fare il submit,
+        bottone cancella per pulire i campi di testo e bottone per continuare senza autenticarsi con reindirizzameno diretto alla pagina scopri-->
         <div class="form-container">
             <h3>Login</h3>
             <form action="login.php" method="post">
                 <label for="user">Username:</label>
-                <input type="text" id="user" name="user" required>
+                <input type="text" id="user" name="user" value="<?php echo isset($_COOKIE['last_username']) ?$_COOKIE['last_username'] : ''; ?>" required>
                 
                 <label for="pwd">Password:</label>
                 <input type="password" id="pwd" name="pwd" required>
@@ -97,23 +97,16 @@
             <button type="button" class="btn" onclick="continueWithoutLogin()">Continua senza autenticarsi</button>
         </div>
     </main>
+     <!--Footer della pagina con indicazioni di copyright, contatti dell'autore (email) e indicazioni sulla pagina corrente-->
     <footer>
-        <p>Copyright &copy; 2024 <a href="mailto:s293556@studenti.polito.it">Elon Musk</a>. Tutti i diritti riservati.</p>
-        <p>Pagina corrente: Xtremely_clear/Login</p>
+    <p>Copyright &copy; 2024 <a href="mailto:s293556@studenti.polito.it"><span id="page_author"></span></a>. Tutti i diritti riservati.</p>
+        <p>Pagina corrente: <span id="current_page"></span></p>
     </footer>
+    <script>
+        // Automazione per la visualizzazione del nome dell'autore e della pagina corrente
+        // Il nome della pagina corrente viene estratto dal path della pagina 
+        document.getElementById('current_page').innerText = window.location.pathname.split('/').pop().replace('.php', '');
+        document.getElementById('page_author').innerText = 'Marco Donatucci';
+    </script>
 </body>
 </html>
-
-<script>
-    // Funzione per cancellare il contenuto dei campi del modulo di login
-    function clearFields() {
-        document.getElementById("user").value = "";
-        document.getElementById("pwd").value = "";
-    }
-
-    // Funzione per continuare senza autenticarsi
-    function continueWithoutLogin() {
-        // Qui puoi inserire il codice per gestire il comportamento quando l'utente decide di continuare senza autenticarsi
-        alert("Continua senza autenticarsi");
-    }
-</script>
