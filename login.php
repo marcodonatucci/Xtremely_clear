@@ -3,38 +3,35 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// Se l'utente è già loggato, reindirizza alla pagina home.php
-if(isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
-    header("Location: home.php");
-    exit();
-}
-
 include 'php/config_normale.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = mysqli_real_escape_string($conn, $_POST['user']);
-    $password = mysqli_real_escape_string($conn, $_POST['pwd']);
+    if(isset($_REQUEST['user']) && isset($_REQUEST['pwd'])){
+        $username = trim($_REQUEST['user']);
+        $password = trim($_REQUEST['pwd']);
+    
+        $sql = "SELECT * FROM utenti WHERE username = '$username'";
+        $result = mysqli_query($conn, $sql);
 
-    $sql = "SELECT * FROM utenti WHERE username = '$username'";
-    $result = $conn->query($sql);
+        if (mysqli_num_rows($result) > 0) {
+            $row = mysqli_fetch_assoc($result);
+            if ($password === $row['pwd']) {
+                $_SESSION['logged_in'] = true;
+                $_SESSION['username'] = $username;
 
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        if ($password === $row['pwd']) {
-            $_SESSION['logged_in'] = true;
-            $_SESSION['username'] = $username;
+                // Memorizza l'username in un cookie per 16 ore
+                setcookie('last_username', $username, time() + 16 * 3600, '/');
 
-            // Memorizza l'username in un cookie per 16 ore
-            setcookie('last_username', $username, time() + 16 * 3600, '/');
-
-            echo "<script>alert('Accesso effettuato con successo!'); window.location='bacheca.php';</script>";
-            exit();
+                echo "<script>alert('Accesso effettuato con successo!'); window.location='bacheca.php';</script>";
+                exit();
+            } else {
+                echo "<script>alert('Password errata! Si prega di riprovare.');</script>";
+            }
         } else {
-            echo "<script>alert('Password errata! Si prega di riprovare.');</script>";
+            echo "<script>alert('Username non trovato! Si prega di registrarsi.'); window.location='registrazione.php';</script>";
         }
-    } else {
-        echo "<script>alert('Username non trovato! Si prega di registrarsi.');</script>";
     }
+    mysqli_close( $conn );
 }
 ?>
 

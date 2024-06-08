@@ -290,7 +290,7 @@ h3 {
     color: #ffffff;
 }
 
-.error-message, .success-message {
+.err, .success-message {
     color: red;
     font-weight: bold;
     text-align: center;

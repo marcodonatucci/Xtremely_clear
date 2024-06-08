@@ -73,4 +73,3 @@ viewport, icona da visualizzare, inclusione file css per gli stili, titolo della
     </script>
 </body>
 </html>
-<!--lista di cose cercate su W3School: button, blockquote, form con i bottoni su yt, textarea-->

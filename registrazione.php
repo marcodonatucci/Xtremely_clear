@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $surname = trim($_REQUEST['surname']);
         $birthdate = trim($_REQUEST['birthdate']);
         $address = trim($_REQUEST['address']);
-        $username = trim($_REQUEST['nick']);
+        $nick = trim($_REQUEST['nick']);
         $pwd = trim($_REQUEST['password']);
         
         $namePattern = "/^[A-Z][\sA-Za-z]{1,11}$/";
@@ -21,34 +21,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
           
             if( !preg_match($namePattern,$name) ) {
               echo "<p class=\"err\">Formato nome non valido! Deve iniziare con una lettera maiuscola, contenere solo lettere e non deve superare i 12 caratteri </p>";
-              $err = true;
             }
             if( !preg_match($surnamePattern,$surname) ) {
               echo "<p class=\"err\">Formato cognome non valido! Deve iniziare con una lettera maiuscola, contenere solo lettere e non deve superare i 16 caratteri </p>";
-              $err = true;
             }
             if( !preg_match($birthdatePattern,$birthdate) ) {
               echo "<p class=\"err\">Formato data non valido!</p>";
-              $err = true;
             }
             if( !preg_match($addressPattern,$address) )  {
               echo "<p class=\"err\">Formato indirizzo non valido! Domicilio deve essere nella forma “Via/Corso/Largo/Piazza/Vicolo
               nome numeroCivico”, dove nome può contenere caratteri alfabetici e spazi mentre numeroCivico
               `e un numero naturale composto da 1 a 4 cifre decimali.</p>";
-              $err = true;
             }
-            if( !filter_var($usernamePattern, $username) ) {
+            if( !filter_var($usernamePattern, $nick) ) {
               echo "<p class=\"err\">Formato username non valido! Deve essere una stringa lunga
               da 4 a 10 caratteri, con solo lettere, numeri e
               - o _ come valori ammessi e deve cominciare con un
               carattere alfabetico</p>";
-              $err = true;
             }
             if( !filter_var($pwdPattern, $pwd) ) {
                 echo "<p class=\"err\">La password inserita non rispetta gli standard di sicurezza! Deve essere una stringa lunga da 8 a 16 caratteri, che puo’ contenere
                 lettere, numeri e caratteri speciali, e deve contenere almeno 1 lettera maiuscola, 1 lettera minuscola,
                 2 numeri e 2 caratteri speciali tra i seguenti (#!?@%^&*+=).</p>";
-                $err = true;
               }
         }
         else{
@@ -58,14 +52,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         include 'php/config_privilegiato.php';
 
         // Controlla se l'username esiste già
-        $sql_check = "SELECT username FROM utenti WHERE username = '$username'";
+        $sql_check = "SELECT username FROM utenti WHERE username = '$nick'";
         $result = mysqli_query($conn, $sql_check);
 
         if (mysqli_num_rows($result) > 0) {
-            echo "<script>alert('Errore: l\'username \"$username\" è già in uso. Scegli un altro username.');</script>";
+            echo "<script>alert('Errore: l\'username \"$nick\" è già in uso. Scegli un altro username.');</script>";
         } else {
             $sql = "INSERT INTO utenti (nome, cognome, data, indirizzo, username, pwd)
-                    VALUES ('$name', '$surname', '$birthdate', '$address', '$username', '$pwd')";
+                    VALUES ('$name', '$surname', '$birthdate', '$address', '$nick', '$pwd')";
 
             if (mysqli_query($conn, $sql) === TRUE) {
                 echo "<script>alert('Registrazione avvenuta con successo'); window.location='login.php';</script>";

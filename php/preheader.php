@@ -15,19 +15,19 @@ if (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
 
     // Recupera l'ultimo tweet dell'utente
     $sql = "SELECT testo FROM tweets WHERE username = ? ORDER BY data DESC LIMIT 1";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $stmt->bind_result($tweet);
-    if ($stmt->fetch()) {
+    $statement = mysqli_prepare( $conn, $sql );
+    mysqli_stmt_bind_param($statement, "s", $username);
+    mysqli_stmt_execute( $statement );
+    mysqli_stmt_bind_result($statement, $tweet );
+    if (mysqli_stmt_fetch($statement)) {
         $lastTweet = substr($tweet, 0, 30);
     }
-    $stmt->close();
+    mysqli_stmt_close( $statement );
 }
-?>
-    <?php if ($username): ?>
-        <div class="user-info">
-            <div class="username"><?php echo $username; ?></div>
-            <p class="last-tweet"><?php echo $lastTweet; ?></p>
-        </div>
-    <?php endif; ?>
+
+if ($username) {
+    printf('<div class="user-info">
+                <div class="username">%s</div>
+                <p class="last-tweet">%s</p>
+            </div>', $username, $lastTweet);
+}
