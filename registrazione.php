@@ -1,36 +1,79 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-include 'php/config_privilegiato.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $nome = mysqli_real_escape_string($conn, $_POST['name']);
-    $cognome = mysqli_real_escape_string($conn, $_POST['surname']);
-    $data = mysqli_real_escape_string($conn, $_POST['birthdate']);
-    $indirizzo = mysqli_real_escape_string($conn, $_POST['address']);
-    $username = mysqli_real_escape_string($conn, $_POST['nick']);
-    $pwd = mysqli_real_escape_string($conn, $_POST['password']);
-
-    // Controlla se l'username esiste già
-    $sql_check = "SELECT username FROM utenti WHERE username = '$username'";
-    $result = $conn->query($sql_check);
-
-    if ($result->num_rows > 0) {
-        echo "<script>alert('Errore: l\'username \"$username\" è già in uso. Scegli un altro username.');</script>";
-    } else {
-        $sql = "INSERT INTO utenti (nome, cognome, data, indirizzo, username, pwd)
-                VALUES ('$nome', '$cognome', '$data', '$indirizzo', '$username', '$pwd')";
-
-        if ($conn->query($sql) === TRUE) {
-            echo "<script>alert('Registrazione avvenuta con successo'); window.location='login.php';</script>";
-        } else {
-            echo "<script>alert('Errore durante la registrazione. Si prega di riprovare più tardi.');</script>";
+    if(isset($_REQUEST['name']) && isset($_REQUEST['surname']) && isset($_REQUEST['birthdate']) && isset($_REQUEST['address']) && isset($_REQUEST['nick']) && isset($_REQUEST['password'])){
+        $name = trim($_REQUEST['name']);
+        $surname = trim($_REQUEST['surname']);
+        $birthdate = trim($_REQUEST['birthdate']);
+        $address = trim($_REQUEST['address']);
+        $username = trim($_REQUEST['nick']);
+        $pwd = trim($_REQUEST['password']);
+        
+        $namePattern = "/^[A-Z][\sA-Za-z]{1,11}$/";
+        $surnamePattern = "/^[A-Z][\sA-Za-z]{1,15}$/";
+        $birthdatePattern = "/^(?:\d{4}-(?:0?[1-9]|1[0-2])-(?:0?[1-9]|[12]\d|3[01]))$/";
+        $addressPattern = "/^(Via|Corso|Largo|Piazza|Vicolo) [A-Za-z\s]+ \d{1,4}$/";
+        $usernamePattern = "/^[A-Za-z][A-Za-z\d\-_]{3,9}$/";
+        $pwdPattern = "/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d{2,})(?=.*[#!?@%^&*+=]{2,})[A-Za-z\d#!?@%^&*+=]{8,16}$/";
+          
+            if( !preg_match($namePattern,$name) ) {
+              echo "<p class=\"err\">Formato nome non valido! Deve iniziare con una lettera maiuscola, contenere solo lettere e non deve superare i 12 caratteri </p>";
+              $err = true;
+            }
+            if( !preg_match($surnamePattern,$surname) ) {
+              echo "<p class=\"err\">Formato cognome non valido! Deve iniziare con una lettera maiuscola, contenere solo lettere e non deve superare i 16 caratteri </p>";
+              $err = true;
+            }
+            if( !preg_match($birthdatePattern,$birthdate) ) {
+              echo "<p class=\"err\">Formato data non valido!</p>";
+              $err = true;
+            }
+            if( !preg_match($addressPattern,$address) )  {
+              echo "<p class=\"err\">Formato indirizzo non valido! Domicilio deve essere nella forma “Via/Corso/Largo/Piazza/Vicolo
+              nome numeroCivico”, dove nome può contenere caratteri alfabetici e spazi mentre numeroCivico
+              `e un numero naturale composto da 1 a 4 cifre decimali.</p>";
+              $err = true;
+            }
+            if( !filter_var($usernamePattern, $username) ) {
+              echo "<p class=\"err\">Formato username non valido! Deve essere una stringa lunga
+              da 4 a 10 caratteri, con solo lettere, numeri e
+              - o _ come valori ammessi e deve cominciare con un
+              carattere alfabetico</p>";
+              $err = true;
+            }
+            if( !filter_var($pwdPattern, $pwd) ) {
+                echo "<p class=\"err\">La password inserita non rispetta gli standard di sicurezza! Deve essere una stringa lunga da 8 a 16 caratteri, che puo’ contenere
+                lettere, numeri e caratteri speciali, e deve contenere almeno 1 lettera maiuscola, 1 lettera minuscola,
+                2 numeri e 2 caratteri speciali tra i seguenti (#!?@%^&*+=).</p>";
+                $err = true;
+              }
         }
-    }
-    $conn->close();
+        else{
+          echo "<p class=\"err\">Errore - Dati Mancanti</p>\n";
+        }
+
+        include 'php/config_privilegiato.php';
+
+        // Controlla se l'username esiste già
+        $sql_check = "SELECT username FROM utenti WHERE username = '$username'";
+        $result = mysqli_query($conn, $sql_check);
+
+        if (mysqli_num_rows($result) > 0) {
+            echo "<script>alert('Errore: l\'username \"$username\" è già in uso. Scegli un altro username.');</script>";
+        } else {
+            $sql = "INSERT INTO utenti (nome, cognome, data, indirizzo, username, pwd)
+                    VALUES ('$name', '$surname', '$birthdate', '$address', '$username', '$pwd')";
+
+            if (mysqli_query($conn, $sql) === TRUE) {
+                echo "<script>alert('Registrazione avvenuta con successo'); window.location='login.php';</script>";
+            } else {
+                echo "<script>alert('Errore durante la registrazione. Si prega di riprovare più tardi.');</script>";
+            }
+        }
+        mysqli_close( $conn );
 }
 ?>
 <!DOCTYPE html>
@@ -81,22 +124,24 @@ viewport, icona da visualizzare, inclusione file css per gli stili, titolo della
             <h3>Registrazione</h3>
             <form action="registrazione.php" method="post" onsubmit="return validateForm()">
                 <label for="name">Nome:</label>
-                <input type="text" id="name" name="name" required minlength="2" maxlength="12" pattern="[A-Z][a-zA-Z ]*">
+                <input type="text" id="name" name="name" required minlength="2" maxlength="12" pattern="[A-Z][a-zA-Z ]*" placeholder="Inizia con maiuscola">
                 
                 <label for="surname">Cognome:</label>
-                <input type="text" id="surname" name="surname" required minlength="2" maxlength="16" pattern="[A-Z][a-zA-Z ]*">
+                <input type="text" id="surname" name="surname" required minlength="2" maxlength="16" pattern="[A-Z][a-zA-Z ]*" placeholder="Inizia con maiuscola">
                 
                 <label for="birthdate">Data di Nascita:</label>
-                <input type="date" id="birthdate" name="birthdate" required>
+                <input type="date" id="birthdate" name="birthdate" required placeholder="aaaa-mm-gg">
                 
                 <label for="address">Indirizzo:</label>
-                <input type="text" id="address" name="address" required pattern="^(Via|Corso|Largo|Piazza|Vicolo) [a-zA-Z ]+ [0-9]{1,4}$">
+                <input type="text" id="address" name="address" required pattern="^(Via|Corso|Largo|Piazza|Vicolo) [a-zA-Z ]+ [0-9]{1,4}$" placeholder="Via nome numero">
                 
                 <label for="nick">Username:</label>
                 <input type="text" id="nick" name="nick" required minlength="4" maxlength="10" pattern="[A-Za-z][A-Za-z0-9_-]*">
+                <small>4-10 caratteri, lettere, numeri, '-' o '_'</small>
                 
                 <label for="password">Password:</label>
                 <input type="password" id="password" name="password" required minlength="8" maxlength="16">
+                <small>8-16 caratteri, maiuscola, minuscola, 2 numeri, 2 speciali</small>
                 
                 <button type="submit" class="btn">Registrati!</button>
             </form>

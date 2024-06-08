@@ -3,12 +3,15 @@ $servername = "localhost";
 $username = "privilegiato";
 $password = "SuperPippo!!!";
 $dbname = "social_network";
-$port = 3307;
 
 // Crea connessione
-$conn = new mysqli($servername, $username, $password, $dbname, $port);
+$conn = mysqli_connect($servername, $username, $password, $dbname);
 
 // Controlla la connessione
-if ($conn->connect_error) {
-    die("Connessione fallita: " . $conn->connect_error);
+if (mysqli_connect_errno()) {
+    printf ("<p>errore - collegamento al DB impossibile: %s</p>\n", mysqli_connect_error());
+}
+
+if (!mysqli_close($con));{
+    printf ("<p>errore di chiusura connessione - impossibile rilasciare le risorse</p>\n");
 }
