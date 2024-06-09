@@ -3,6 +3,12 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+// Se l'utente è già loggato, reindirizza alla pagina home.php
+if(isset($_SESSION['logged_in']) && $_SESSION['logged_in']) {
+    header("Location: home.php");
+    exit();
+}
+
 include 'php/config_normale.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

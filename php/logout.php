@@ -10,5 +10,5 @@ session_unset();
 session_destroy();
 
 // Reindirizza alla pagina home.php dopo il logout
-header("Location: ../home.php");
+echo "<script>alert('Logout effettuato con successo!'); window.location='../home.php';</script>";
 exit();

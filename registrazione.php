@@ -124,7 +124,7 @@ viewport, icona da visualizzare, inclusione file css per gli stili, titolo della
                 <input type="text" id="surname" name="surname" required minlength="2" maxlength="16" pattern="[A-Z][a-zA-Z ]*" placeholder="Inizia con maiuscola">
                 
                 <label for="birthdate">Data di Nascita:</label>
-                <input type="date" id="birthdate" name="birthdate" required placeholder="aaaa-mm-gg">
+                <input type="date" id="birthdate" name="birthdate" required placeholder="aaaa-mm-gg" onfocus="dataLimitBirthdate()">
                 
                 <label for="address">Indirizzo:</label>
                 <input type="text" id="address" name="address" required pattern="^(Via|Corso|Largo|Piazza|Vicolo) [a-zA-Z ]+ [0-9]{1,4}$" placeholder="Via nome numero">

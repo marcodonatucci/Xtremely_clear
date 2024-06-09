@@ -6,8 +6,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
 // Controlla se l'utente è autenticato
 if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
-    $_SESSION['error_message'] = "Identità non verificata. Non hai permesso di usare questa funzionalità senza autenticazione.";
-    header("Location: scopri.php");
+    echo "<script>alert('Identità non verificata! Non hai permesso di usare questa funzionalità senza autenticazione.'); window.location='scopri.php';</script>";
     exit();
 }
 
@@ -16,13 +15,11 @@ include 'php/config_privilegiato.php';
 
 // Verifica se il modulo è stato inviato
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Recupera il contenuto del tweet
-    $content = trim($_POST['tweet']);
-    
     // Controlla che il contenuto non sia vuoto
-    if (empty($content)) {
-        $_SESSION['error_message'] = "Il tweet non può essere vuoto.";
-    } else {
+    if (isset($_REQUEST['tweet']) && $_REQUEST['tweet']) {
+        // Recupera il contenuto del tweet
+        $content = trim($_REQUEST['tweet']);
+    
         // Recupera l'ID dell'utente dalla sessione
         $username = $_SESSION['username'];
 
@@ -31,23 +28,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Prepara e esegui la query SQL per inserire il tweet nel database
         $sql = "INSERT INTO tweets (username, data, testo) VALUES (?, NOW(), ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ss", $username, $content);
+        $statement = mysqli_prepare($conn, $sql);
+        mysqli_stmt_bind_param($statement, "ss", $username, $content);
 
-        if ($stmt->execute()) {
-            $_SESSION['success_message'] = "Tweet inviato con successo!";
+        if (mysqli_stmt_execute($statement)) {
+            echo "<script>alert('Tweet inviato con successo!'); window.location='bacheca.php';</script>";
         } else {
-            $_SESSION['error_message'] = "Errore nell'invio del tweet. Riprova più tardi.";
+            echo "<script>alert('Errore nell'invio del tweet! Riprova più tardi.'); window.location='scrivi.php';</script>";
             // Se non è stato inviato il modulo, reindirizza alla pagina scrivi.php
-            header("Location: scrivi.php");
             exit();
         }
-
-        $stmt->close();
-        $conn->close();
-
-        // Reindirizza alla pagina bacheca se non ci sono errori
-        header("Location: bacheca.php");
+        mysqli_stmt_close( $statement);
+        mysqli_close( $conn );
+    } else {
+        echo "<script>alert('Il tweet non può essere vuoto!'); window.location='scrivi.php';</script>";
         exit();
     }
 }
@@ -93,25 +87,6 @@ viewport, icona da visualizzare, inclusione file css per gli stili, titolo della
 <main>
         <div class="form-container">
             <h3>Scrivi un Tweet!</h3>
-
-            <!-- Visualizza i messaggi di errore o di successo -->
-            <?php if (isset($_SESSION['error_message'])): ?>
-                <div class="error-message">
-                    <?php
-                    echo $_SESSION['error_message'];
-                    unset($_SESSION['error_message']);
-                    ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if (isset($_SESSION['success_message'])): ?>
-                <div class="success-message">
-                    <?php
-                    echo $_SESSION['success_message'];
-                    unset($_SESSION['success_message']);
-                    ?>
-                </div>
-            <?php endif; ?>
             <!--Form per la scrittura di un tweet composto da una textarea in cui inserire il testo del messaggio e un bottone per il submit-->
             <form action="scrivi.php" method="post">
                 <label for="tweet">Testo (max 140 caratteri):</label>

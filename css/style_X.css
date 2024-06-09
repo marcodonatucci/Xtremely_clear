@@ -290,14 +290,10 @@ h3 {
     color: #ffffff;
 }
 
-.err, .success-message {
+.err{
     color: red;
     font-weight: bold;
     text-align: center;
-}
-
-.success-message {
-    color: green;
 }
 
 .no-tweets {

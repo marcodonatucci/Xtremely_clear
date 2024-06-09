@@ -13,12 +13,12 @@ mysqli_set_charset($conn, "utf8");
 // Recupera tutti i tweet dal database
 $sql = "SELECT * FROM `tweets`
         ORDER BY tweets.data DESC";
-$result = $conn->query($sql);
+$result = mysqli_query($conn, $sql);
 
 // Controlla se ci sono risultati
 $tweets = [];
-if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
+if (mysqli_num_rows($result) > 0) {
+    while( $row = mysqli_fetch_assoc($result)) {
         $tweet = array(
             'username' => $row['username'],
             'data' => $row['data'],
@@ -27,6 +27,7 @@ if ($result->num_rows > 0) {
         $tweets[] = $row;
     }
 }
+mysqli_close( $conn );
 ?>
 <!DOCTYPE html>
 <!--Impostazione dei metadati della pagina: lingua, codifica utf8, autore, breve descrizione,
@@ -66,45 +67,27 @@ viewport, icona da visualizzare, inclusione file css per gli stili, titolo della
     </nav>
     </div>
 <main>
-        <div class="tweet-container">
+<div class="tweet-container">
             <!--Visualizzazione di tutti i tweet contenuti nel database in un elenco, commenta!!-->
             <h3>Tutti i Tweet</h3>
-
-            <?php if (isset($_SESSION['error_message'])): ?>
-                <div class="error-message">
-                    <?php
-                    echo $_SESSION['error_message'];
-                    unset($_SESSION['error_message']);
-                    ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if (isset($_SESSION['success_message'])): ?>
-                <div class="success-message">
-                    <?php
-                    echo $_SESSION['success_message'];
-                    unset($_SESSION['success_message']);
-                    ?>
-                </div>
-            <?php endif; ?>
-
             <!-- Verifica se ci sono tweet, commenta!! -->
-            <?php if (count($tweets) > 0): ?>
-                <!-- Ciclo per mostrare ogni tweet, commenta!! -->
-                <?php foreach ($tweets as $tweet): ?>
-                    <div class="tweet">
-                        <div class="header">
-                            <span class="author"><?php echo $tweet['username']; ?></span>
-                            <span class="date"><?php echo $tweet['data']; ?></span>
-                        </div>
-                        <p class="content"><?php echo $tweet['testo']; ?></p>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p class="no-tweets">Non ci sono tweet da visualizzare!</p>
-            <?php endif; ?>
-        </div>
-    </main>
+            <?php 
+                if (count($tweets) > 0){
+                    foreach ($tweets as $tweet){
+                            echo "<div class=\"tweet\">";
+                            echo "<div class=\"header\">";
+                            echo "<span class=\"author\">".$tweet['username']."</span>";
+                            echo "<span class=\"date\">".$tweet['data']."</span>";
+                            echo "</div>";
+                            echo "<p class=\"content\">".$tweet['testo']."</p>";
+                            echo "</div>";
+                    }
+                } else {
+                    echo "<p class=\"no-tweets\">Non ci sono tweet da visualizzare!</p>";
+                }
+            ?>
+</div>
+</main>
      <!--Footer della pagina con indicazioni di copyright, contatti dell'autore (email) e indicazioni sulla pagina corrente-->
     <footer>
     <p>Copyright &copy; 2024 <a href="mailto:s293556@studenti.polito.it"><span id="page_author"></span></a>. Tutti i diritti riservati.</p>

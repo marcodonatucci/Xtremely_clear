@@ -5,8 +5,7 @@ if (session_status() == PHP_SESSION_NONE) {
 }
 
 if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
-    $_SESSION['error_message'] = "Identità non verificata. Non hai permesso di usare questa funzionalità senza autenticazione.";
-    header("Location: scopri.php");
+    echo "<script>alert('Identità non verificata! Non hai permesso di usare questa funzionalità senza autenticazione.'); window.location='scopri.php';</script>";
     exit();
 }
 
@@ -17,29 +16,39 @@ include 'php/config_normale.php';
 $username = $_SESSION['username'];
 
 // Imposta le variabili per il filtro temporale
-$start_date = isset($_GET['start_date']) ? $_GET['start_date'] : null;
-$end_date = isset($_GET['end_date']) ? $_GET['end_date'] : null;
+if(isset($_GET['start_date']) && isset($_GET['end_date'])){
+    $start_date = $_GET['start_date'];
+    $end_date = $_GET['end_date'];
+}else{
+    $start_date = null;
+    $end_date = null;
+}
 
 // Crea la query SQL per recuperare i tweet dell'utente
 $sql = "SELECT * FROM tweets WHERE username = ?";
 
 if ($start_date && $end_date) {
     $sql .= " AND data BETWEEN ? AND ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("sss", $username, $start_date, $end_date);
+    $statement = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($statement, "sss", $username, $start_date, $end_date);
 } else {
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $username);
+    $statement = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($statement, "s", $username);
 }
 
 //forzo la codifica dei dati del database
 mysqli_set_charset($conn, "utf8");
 
 // Esegui la query
-$stmt->execute();
-$result = $stmt->get_result();
-$tweets = $result->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
+mysqli_stmt_execute($statement);
+$result = mysqli_stmt_get_result( $statement );
+$tweets = [];
+// Usa un ciclo while per estrarre i risultati
+while ($row = mysqli_fetch_assoc($result)) {
+    $tweets[] = $row;
+}
+mysqli_stmt_close($statement);
+mysqli_close( $conn );
 ?>
 <!DOCTYPE html>
 <!--Impostazione dei metadati della pagina: lingua, codifica utf8, autore, breve descrizione,
@@ -91,19 +100,21 @@ viewport, icona da visualizzare, inclusione file css per gli stili, titolo della
             </form>
             
             <!--Visualizza i tweet, commentare!!-->
-            <?php if (count($tweets) > 0): ?>
-                <?php foreach ($tweets as $tweet): ?>
-                    <div class="tweet">
-                        <div class="header">
-                            <span class="author"><?php echo $tweet['username']; ?></span>
-                            <span class="date"><?php echo $tweet['data']; ?></span>
-                        </div>
-                        <p class="content"><?php echo $tweet['testo']; ?></p>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p class="no-tweets">Non hai ancora scritto nessun tweet... Vai su Scrivi e creane uno ora!</p>
-            <?php endif; ?>
+            <?php 
+                if (count($tweets) > 0){
+                    foreach ($tweets as $tweet){
+                            echo "<div class=\"tweet\">";
+                            echo "<div class=\"header\">";
+                            echo "<span class=\"author\">".$tweet['username']."</span>";
+                            echo "<span class=\"date\">".$tweet['data']."</span>";
+                            echo "</div>";
+                            echo "<p class=\"content\">".$tweet['testo']."</p>";
+                            echo "</div>";
+                    }
+                } else {
+                    echo "<p class=\"no-tweets\">Non hai ancora scritto nessun tweet... Vai su scrivi e creane uno ora!</p>";
+                }
+            ?>
         </div>
     </main>
      <!--Footer della pagina con indicazioni di copyright, contatti dell'autore (email) e indicazioni sulla pagina corrente-->

@@ -54,3 +54,9 @@ function validateForm() {
     // Se tutte le validazioni passano, invio del modulo consentito
     return true;
 }
+
+function dataLimitBirthdate(){
+    var birthdate = document.getElementById('birthdate');
+    var today = new Date().toISOString().split('T')[0];
+    birthdate.setAttribute('max', today);
+}
