@@ -296,6 +296,12 @@ h3 {
     text-align: center;
 }
 
+.success{
+    color: green;
+    font-weight: bold;
+    text-align: center;
+}
+
 .no-tweets {
     color: #ffffff;
     text-align: center;

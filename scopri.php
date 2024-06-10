@@ -65,6 +65,14 @@ viewport, icona da visualizzare, inclusione file css per gli stili, titolo della
             <li><a href="php/logout.php" class="<?php echo (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) ? '' : 'disabled'; ?>">LOGOUT</a></li>
         </ul>
     </nav>
+    <?php
+        // Mostra il messaggio di errore se esiste
+        if (isset($_SESSION['error_message'])) {
+            echo '<div class="err">' . $_SESSION['error_message'] . '</div>';
+            // Rimuovi il messaggio di errore dalla sessione dopo averlo visualizzato
+            unset($_SESSION['error_message']);
+        }
+    ?>
     </div>
 <main>
 <div class="tweet-container">
@@ -90,14 +98,8 @@ viewport, icona da visualizzare, inclusione file css per gli stili, titolo della
 </main>
      <!--Footer della pagina con indicazioni di copyright, contatti dell'autore (email) e indicazioni sulla pagina corrente-->
     <footer>
-    <p>Copyright &copy; 2024 <a href="mailto:s293556@studenti.polito.it"><span id="page_author"></span></a>. Tutti i diritti riservati.</p>
-        <p>Pagina corrente: <span id="current_page"></span></p>
+    <p>Copyright &copy; 2024 <a href="mailto:s293556@studenti.polito.it">Marco Donatucci</a>. Tutti i diritti riservati.</p>
+        <p>Pagina corrente: Xtremely_clear/Scopri</p>
     </footer>
-    <script>
-        // Automazione per la visualizzazione del nome dell'autore e della pagina corrente
-        // Il nome della pagina corrente viene estratto dal path della pagina 
-        document.getElementById('current_page').innerText = window.location.pathname.split('/').pop().replace('.php', '');
-        document.getElementById('page_author').innerText = 'Marco Donatucci';
-    </script>
 </body>
 </html>

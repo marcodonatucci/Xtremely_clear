@@ -6,7 +6,8 @@ if (session_status() == PHP_SESSION_NONE) {
 
 // Controlla se l'utente è autenticato
 if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) {
-    echo "<script>alert('Identità non verificata! Non hai permesso di usare questa funzionalità senza autenticazione.'); window.location='scopri.php';</script>";
+    $_SESSION['error_message'] = "Identità non verificata! Non hai permesso di usare questa funzionalità senza autenticazione.";
+    header("Location: scopri.php");
     exit();
 }
 
@@ -32,16 +33,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         mysqli_stmt_bind_param($statement, "ss", $username, $content);
 
         if (mysqli_stmt_execute($statement)) {
-            echo "<script>alert('Tweet inviato con successo!'); window.location='bacheca.php';</script>";
+            $_SESSION['success_message'] = "Tweet inviato con successo!";
         } else {
-            echo "<script>alert('Errore nell'invio del tweet! Riprova più tardi.'); window.location='scrivi.php';</script>";
-            // Se non è stato inviato il modulo, reindirizza alla pagina scrivi.php
+            $_SESSION['error_message'] = "Errore nell'invio del tweet! Riprova più tardi.";
+            mysqli_stmt_close( $statement);
+            mysqli_close( $conn );
+            header("Location: scrivi.php");
             exit();
         }
         mysqli_stmt_close( $statement);
         mysqli_close( $conn );
     } else {
-        echo "<script>alert('Il tweet non può essere vuoto!'); window.location='scrivi.php';</script>";
+        $_SESSION['error_message'] = "Il tweet non può essere vuoto!";
+        mysqli_stmt_close( $statement);
+        mysqli_close( $conn );
+        header("Location: scrivi.php");
         exit();
     }
 }
@@ -83,28 +89,37 @@ viewport, icona da visualizzare, inclusione file css per gli stili, titolo della
             <li><a href="php/logout.php" class="<?php echo (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) ? '' : 'disabled'; ?>">LOGOUT</a></li>
         </ul>
     </nav>
+    <?php
+        // Mostra il messaggio di errore se esiste
+        if (isset($_SESSION['error_message'])) {
+            echo '<div class="err">' . $_SESSION['error_message'] . '</div>';
+            // Rimuovi il messaggio di errore dalla sessione dopo averlo visualizzato
+            unset($_SESSION['error_message']);
+        }
+    ?>
     </div>
 <main>
         <div class="form-container">
             <h3>Scrivi un Tweet!</h3>
+            <?php
+                if(isset($_SESSION['success_message'])) {
+                    echo '<div class="success">' . $_SESSION['success_message'] . '</div>';
+                    // Rimuovi il messaggio di errore dalla sessione dopo averlo visualizzato
+                    unset($_SESSION['success_message']);
+                }
+            ?>
             <!--Form per la scrittura di un tweet composto da una textarea in cui inserire il testo del messaggio e un bottone per il submit-->
-            <form action="scrivi.php" method="post">
+            <form id="write" action="scrivi.php" method="post">
                 <label for="tweet">Testo (max 140 caratteri):</label>
                 <textarea id="tweet" name="tweet" rows="4" maxlength="140" required></textarea>
-                <button type="submit" class="btn">Invia</button>
+                <button id="btn4" type="submit" class="btn">Invia</button>
             </form>
         </div>
     </main>
      <!--Footer della pagina con indicazioni di copyright, contatti dell'autore (email) e indicazioni sulla pagina corrente-->
     <footer>
-    <p>Copyright &copy; 2024 <a href="mailto:s293556@studenti.polito.it"><span id="page_author"></span></a>. Tutti i diritti riservati.</p>
-        <p>Pagina corrente: <span id="current_page"></span></p>
+    <p>Copyright &copy; 2024 <a href="mailto:s293556@studenti.polito.it">Marco Donatucci</a>. Tutti i diritti riservati.</p>
+        <p>Pagina corrente: Xtremely_clear/Scopri</p>
     </footer>
-    <script>
-        // Automazione per la visualizzazione del nome dell'autore e della pagina corrente
-        // Il nome della pagina corrente viene estratto dal path della pagina 
-        document.getElementById('current_page').innerText = window.location.pathname.split('/').pop().replace('.php', '');
-        document.getElementById('page_author').innerText = 'Marco Donatucci';
-    </script>
 </body>
 </html>

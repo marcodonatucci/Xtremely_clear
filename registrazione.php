@@ -20,33 +20,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $pwdPattern = "/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d{2,})(?=.*[#!?@%^&*+=]{2,})[A-Za-z\d#!?@%^&*+=]{8,16}$/";
           
             if( !preg_match($namePattern,$name) ) {
-              echo "<p class=\"err\">Formato nome non valido! Deve iniziare con una lettera maiuscola, contenere solo lettere e non deve superare i 12 caratteri </p>";
+                $_SESSION['error_message'] = 'Formato nome non valido! Deve iniziare con una lettera maiuscola, contenere solo lettere e non deve superare i 12 caratteri';
+                header('Location: registrazione.php');
+                exit();
             }
             if( !preg_match($surnamePattern,$surname) ) {
-              echo "<p class=\"err\">Formato cognome non valido! Deve iniziare con una lettera maiuscola, contenere solo lettere e non deve superare i 16 caratteri </p>";
+                $_SESSION['error_message'] = 'Formato cognome non valido! Deve iniziare con una lettera maiuscola, contenere solo lettere e non deve superare i 16 caratteri';
+                header('Location: registrazione.php');
+                exit();
             }
             if( !preg_match($birthdatePattern,$birthdate) ) {
-              echo "<p class=\"err\">Formato data non valido!</p>";
+                $_SESSION['error_message'] = 'Formato data non valido!';
+                header('Location: registrazione.php');
+                exit();
             }
             if( !preg_match($addressPattern,$address) )  {
-              echo "<p class=\"err\">Formato indirizzo non valido! Domicilio deve essere nella forma “Via/Corso/Largo/Piazza/Vicolo
-              nome numeroCivico”, dove nome può contenere caratteri alfabetici e spazi mentre numeroCivico
-              `e un numero naturale composto da 1 a 4 cifre decimali.</p>";
+                $_SESSION['error_message'] = 'Formato indirizzo non valido! Domicilio deve essere nella forma “Via/Corso/Largo/Piazza/Vicolo
+                nome numeroCivico”, dove nome può contenere caratteri alfabetici e spazi mentre numeroCivico
+                `e un numero naturale composto da 1 a 4 cifre decimali.';
+                header('Location: registrazione.php');
+                exit();
             }
             if( !filter_var($usernamePattern, $nick) ) {
-              echo "<p class=\"err\">Formato username non valido! Deve essere una stringa lunga
-              da 4 a 10 caratteri, con solo lettere, numeri e
-              - o _ come valori ammessi e deve cominciare con un
-              carattere alfabetico</p>";
+                $_SESSION['error_message'] = 'Formato username non valido! Deve essere una stringa lunga
+                da 4 a 10 caratteri, con solo lettere, numeri e
+                - o _ come valori ammessi e deve cominciare con un
+                carattere alfabetico.';
+                header('Location: registrazione.php');
+                exit();
             }
             if( !filter_var($pwdPattern, $pwd) ) {
-                echo "<p class=\"err\">La password inserita non rispetta gli standard di sicurezza! Deve essere una stringa lunga da 8 a 16 caratteri, che puo’ contenere
+                $_SESSION['error_message'] = 'La password inserita non rispetta gli standard di sicurezza! Deve essere una stringa lunga da 8 a 16 caratteri, che puo’ contenere
                 lettere, numeri e caratteri speciali, e deve contenere almeno 1 lettera maiuscola, 1 lettera minuscola,
-                2 numeri e 2 caratteri speciali tra i seguenti (#!?@%^&*+=).</p>";
-              }
+                2 numeri e 2 caratteri speciali tra i seguenti (#!?@%^&*+=).';
+                header('Location: registrazione.php');
+                exit();
+            }
+            $today = date('Y-m-d');
+            if($birthdate > $today) {
+                $_SESSION['error_message'] = "La data di nascita non può essere nel futuro!";
+                header("Location: registrazione.php"); // Cambia 'form_page.php' con la tua pagina del form
+                exit();
+            }
         }
         else{
-          echo "<p class=\"err\">Errore - Dati Mancanti</p>\n";
+          $_SESSION['error_message'] = 'Errore - Dati mancanti!';
+          header('Location: registrazione.php');
+          exit();
         }
 
         include 'php/config_privilegiato.php';
@@ -56,18 +76,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $result = mysqli_query($conn, $sql_check);
 
         if (mysqli_num_rows($result) > 0) {
-            echo "<script>alert('Errore: l\'username \"$nick\" è già in uso. Scegli un altro username.');</script>";
+            $_SESSION['error_message'] = 'Errore - L\'username '.$nick.' è già in uso. Scegli un altro username.';
+            mysqli_close( $conn );
+            header('Location: registrazione.php');
+            exit();
         } else {
             $sql = "INSERT INTO utenti (nome, cognome, data, indirizzo, username, pwd)
                     VALUES ('$name', '$surname', '$birthdate', '$address', '$nick', '$pwd')";
 
             if (mysqli_query($conn, $sql) === TRUE) {
-                echo "<script>alert('Registrazione avvenuta con successo'); window.location='login.php';</script>";
+                $_SESSION['success_message'] = 'Registrazione avvenuta con successo!';
+                mysqli_close( $conn );
+                header('Location: login.php');
+                exit();
             } else {
-                echo "<script>alert('Errore durante la registrazione. Si prega di riprovare più tardi.');</script>";
+                $_SESSION['error_message'] = 'Errore durante la registrazione. Si prega di riprovare più tardi.';
+                mysqli_close( $conn );
+                header('Location: registrazione.php');
+                exit();
             }
         }
-        mysqli_close( $conn );
 }
 ?>
 <!DOCTYPE html>
@@ -108,6 +136,14 @@ viewport, icona da visualizzare, inclusione file css per gli stili, titolo della
             <li><a href="php/logout.php" class="<?php echo (isset($_SESSION['logged_in']) && $_SESSION['logged_in']) ? '' : 'disabled'; ?>">LOGOUT</a></li>
         </ul>
     </nav>
+    <?php
+        // Mostra il messaggio di errore se esiste
+        if (isset($_SESSION['error_message'])) {
+            echo '<div class="err">' . $_SESSION['error_message'] . '</div>';
+            // Rimuovi il messaggio di errore dalla sessione dopo averlo visualizzato
+            unset($_SESSION['error_message']);
+        }
+    ?>
     </div>
     <main>
         <!--Form per la procedura di registrazione, contiene tutti i textfield relativi ai dati da inserire con l'attributo required 
@@ -116,7 +152,7 @@ viewport, icona da visualizzare, inclusione file css per gli stili, titolo della
         utilizzata la funzione di validazione del form definita nello script js esterno e incluso nel tag head della pagina corrente-->
         <div class="form-container">
             <h3>Registrazione</h3>
-            <form action="registrazione.php" method="post" onsubmit="return validateForm()">
+            <form id="signup" action="registrazione.php" method="post" onsubmit="return validateForm()">
                 <label for="name">Nome:</label>
                 <input type="text" id="name" name="name" required minlength="2" maxlength="12" pattern="[A-Z][a-zA-Z ]*" placeholder="Inizia con maiuscola">
                 
@@ -137,20 +173,14 @@ viewport, icona da visualizzare, inclusione file css per gli stili, titolo della
                 <input type="password" id="password" name="password" required minlength="8" maxlength="16">
                 <small>8-16 caratteri, maiuscola, minuscola, 2 numeri, 2 speciali</small>
                 
-                <button type="submit" class="btn">Registrati!</button>
+                <button id="btn1" type="submit" class="btn">Registrati!</button>
             </form>
         </div>
     </main>
      <!--Footer della pagina con indicazioni di copyright, contatti dell'autore (email) e indicazioni sulla pagina corrente-->
     <footer>
-    <p>Copyright &copy; 2024 <a href="mailto:s293556@studenti.polito.it"><span id="page_author"></span></a>. Tutti i diritti riservati.</p>
-        <p>Pagina corrente: <span id="current_page"></span></p>
+    <p>Copyright &copy; 2024 <a href="mailto:s293556@studenti.polito.it">Marco Donatucci</a>. Tutti i diritti riservati.</p>
+        <p>Pagina corrente: Xtremely_clear/Registrazione</p>
     </footer>
-    <script>
-        // Automazione per la visualizzazione del nome dell'autore e della pagina corrente
-        // Il nome della pagina corrente viene estratto dal path della pagina 
-        document.getElementById('current_page').innerText = window.location.pathname.split('/').pop().replace('.php', '');
-        document.getElementById('page_author').innerText = 'Marco Donatucci';
-    </script>
 </body>
 </html>
