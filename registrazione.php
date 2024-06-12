@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 header('Location: registrazione.php');
                 exit();
             }
-            if( !filter_var($usernamePattern, $nick) ) {
+            if( !preg_match($usernamePattern, $nick) ) {
                 $_SESSION['error_message'] = 'Formato username non valido! Deve essere una stringa lunga
                 da 4 a 10 caratteri, con solo lettere, numeri e
                 - o _ come valori ammessi e deve cominciare con un
@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 header('Location: registrazione.php');
                 exit();
             }
-            if( !filter_var($pwdPattern, $pwd) ) {
+            if( !preg_match($pwdPattern, $pwd) ) {
                 $_SESSION['error_message'] = 'La password inserita non rispetta gli standard di sicurezza! Deve essere una stringa lunga da 8 a 16 caratteri, che puo’ contenere
                 lettere, numeri e caratteri speciali, e deve contenere almeno 1 lettera maiuscola, 1 lettera minuscola,
                 2 numeri e 2 caratteri speciali tra i seguenti (#!?@%^&*+=).';
